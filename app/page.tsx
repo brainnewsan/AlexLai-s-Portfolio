@@ -41,6 +41,45 @@ const items: Item[] = [
   },
 ];
 
+// 單獨的組件來處理每個項目，這樣可以在組件內使用 useInView hook
+function PortfolioItem({ item, index }: { item: Item; index: number }) {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  return (
+    <Link href={item.link}>
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 50 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: index * 0.2 }}
+        className="group relative h-[600px] bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-[1.02]"
+      >
+        <div className="absolute inset-0">
+          <Image
+            src={item.src || ''}
+            alt={item.title}
+            fill
+            className="object-cover"
+            priority={index === 0}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none" />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+          <h3 className="text-white text-2xl font-bold mb-2 drop-shadow-lg">
+            {item.title}
+          </h3>
+          <p className="text-white/90 text-base drop-shadow-lg">
+            {item.description}
+          </p>
+        </div>
+      </motion.div>
+    </Link>
+  );
+}
+
 export default function Home() {
   const FADE_DURATION_SECONDS = 1.2;
   const DWELL_MS = 3000; 
@@ -113,43 +152,9 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
-            {items.map((item, index) => {
-              const [ref, inView] = useInView({
-                triggerOnce: true,
-                threshold: 0.1,
-              });
-
-              return (
-                <Link href={item.link} key={index}>
-                  <motion.div
-                    ref={ref}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.2 }}
-                    className="group relative h-[600px] bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-[1.02]"
-                  >
-                    <div className="absolute inset-0">
-                      <Image
-                        src={item.src || ''}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none" />
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                      <h3 className="text-white text-2xl font-bold mb-2 drop-shadow-lg">
-                        {item.title}
-                      </h3>
-                      <p className="text-white/90 text-base drop-shadow-lg">
-                        {item.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                </Link>
-              );
-            })}
+            {items.map((item, index) => (
+              <PortfolioItem key={index} item={item} index={index} />
+            ))}
           </div>
         </div>
       </div>
