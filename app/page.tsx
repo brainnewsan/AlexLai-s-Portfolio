@@ -1,9 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import Image from 'next/image';
+import Link from 'next/link';
 import Navbar from './components/Navbar';
 import { useEffect, useMemo, useState } from 'react';
-import PortfolioItem from './components/PortfolioItem';
 
 interface Item {
   type: 'image' | 'video';
@@ -20,21 +22,21 @@ const items: Item[] = [
     type: 'image',
     src: '/images/trump_usa.jpg',
     title: 'Graphic Portfolios',
-    description: 'A collection of my visual design work, from branding to digital art.',
+    description: '',
     link: '/photos',
   },
   {
     type: 'image',
     src: '/images/trade_policy.jpg',
     title: 'Video Portfolios',
-    description: 'Explore a range of video projects, showcasing storytelling and editing skills.',
+    description: '',
     link: '/videos',
   },
   {
     type: 'image',
     src: '/images/energy_policy.jpg',
     title: 'About me',
-    description: 'Learn more about my background, creative process, and what drives me.',
+    description: '',
     link: '/about',
   },
 ];
@@ -71,26 +73,6 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [greetings.length, INTERVAL_MS]);
 
-  const sentenceVariant = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const letterVariant = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { ease: 'easeOut', duration: 0.4 },
-    },
-  };
-
   return (
     <div className="relative min-h-[100svh]">
       <Navbar />
@@ -107,22 +89,17 @@ export default function Home() {
       <div className="relative z-10 pt-16">
         <div className="container mx-auto px-4 pt-12 pb-20">
           <div className="relative">
-            <h2 className="text-2xl text-center mb-8 text-gray-700 flex justify-center items-center h-8" aria-live="polite">
+            <h2 className="text-2xl text-center mb-8 text-gray-700" aria-live="polite">
               <AnimatePresence mode="wait">
-                <motion.div
+                <motion.span
                   key={greetings[greetingIndex]}
-                  variants={sentenceVariant}
-                  initial="hidden"
-                  animate="visible"
-                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
-                  className="flex"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: FADE_DURATION_SECONDS, ease: 'easeInOut' }}
                 >
-                  {greetings[greetingIndex].split('').map((char, index) => (
-                    <motion.span key={`${char}-${index}`} variants={letterVariant}>
-                      {char}
-                    </motion.span>
-                  ))}
-                </motion.div>
+                  {greetings[greetingIndex]}
+                </motion.span>
               </AnimatePresence>
             </h2>
 
@@ -137,9 +114,40 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
             {items.map((item, index) => {
+              const [ref, inView] = useInView({
+                triggerOnce: true,
+                threshold: 0.1,
+              });
+
               return (
-                // The key is now on the PortfolioItem component
-                <PortfolioItem key={item.title} item={item} index={index} />
+                <Link href={item.link} key={index}>
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    className="group relative h-[600px] bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-[1.02]"
+                  >
+                    <div className="absolute inset-0">
+                      <Image
+                        src={item.src || ''}
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                      <h3 className="text-white text-2xl font-bold mb-2 drop-shadow-lg">
+                        {item.title}
+                      </h3>
+                      <p className="text-white/90 text-base drop-shadow-lg">
+                        {item.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                </Link>
               );
             })}
           </div>

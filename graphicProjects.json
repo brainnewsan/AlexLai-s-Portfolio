@@ -1,0 +1,20 @@
+[
+  {
+    "order": 1,
+    "src": "/images/trump_usa.jpg",
+    "title": "特朗普政策影響",
+    "description": "減稅政策與金融服務改革分析"
+  },
+  {
+    "order": 2,
+    "src": "/images/trade_policy.jpg",
+    "title": "對華貿易政策",
+    "description": "貿易戰影響與中國因應對策"
+  },
+  {
+    "order": 3,
+    "src": "/images/energy_policy.jpg",
+    "title": "化石燃料和傳統能源",
+    "description": "能源政策與環境影響評估"
+  }
+]

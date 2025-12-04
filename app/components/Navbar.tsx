@@ -24,7 +24,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="text-2xl font-bold gradient-text">
-          Alex's Portfolio
+          Alex&apos;s Portfolio
           </Link>
           <div className="flex space-x-8">
             {navItems.map((item) => (
