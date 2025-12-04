@@ -3,7 +3,7 @@
 import Navbar from '../components/Navbar';
 import PhotoItem from '../components/PhotoItem';
 
-export const photos = [
+const photos = [
   {
     src: '/images/Proj-1/trump_usa.jpg',
     title: '特朗普政策影響',

@@ -3,7 +3,7 @@
 import Navbar from '../components/Navbar';
 import VideoItem from '../components/VideoItem';
 
-export const videos = [
+const videos = [
   {
     videoId: 'kMAGDwlb7xA',
     title: '中美貿易政策分析',
