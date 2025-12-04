@@ -21,7 +21,7 @@ export default function About() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-4xl font-bold mb-4 text-gray-800"
             >
-              關於我
+              About Me
             </motion.h1>
             
             <motion.p
